@@ -33,7 +33,7 @@ defmodule AttrAccessor.MixProject do
 
   defp docs do
     [
-      main: "README",
+      main: "AttrAccessor",
       extras: ["README.md"]
     ]
   end
