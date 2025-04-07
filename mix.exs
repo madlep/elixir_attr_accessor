@@ -9,6 +9,7 @@ defmodule AttrAccessor.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
+      package: package()
       licenses: "MIT",
       source_url: "https://github.com/madlep/elixir_attr_accessor"
     ]
@@ -30,6 +31,13 @@ defmodule AttrAccessor.MixProject do
     [
       main: "README",
       extras: ["README.md"]
+    ]
+  end
+
+  defp package() do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/madlep/elixir_attr_accessor"}
     ]
   end
 end
