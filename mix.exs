@@ -7,6 +7,7 @@ defmodule AttrAccessor.MixProject do
       version: "0.1.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
+      description: description(),
       deps: deps(),
       docs: docs(),
       package: package(),
@@ -18,6 +19,10 @@ defmodule AttrAccessor.MixProject do
     [
       extra_applications: [:logger]
     ]
+  end
+
+  defp description do
+    "Ruby style attr_accessor macros to generate functions to read/update/write struct fields"
   end
 
   defp deps do
