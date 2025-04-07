@@ -8,7 +8,8 @@ defmodule AttrAccessor.MixProject do
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      licenses: "MIT"
     ]
   end
 
