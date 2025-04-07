@@ -62,9 +62,11 @@ defmodule AttrAccessor do
   """
   @spec attr_accessor(atom() | [atom()]) :: Macro.t()
   defmacro attr_accessor(attrs) do
-    attr_reader_ast(attrs) ++
-      attr_updater_ast(attrs) ++
-      attr_writer_ast(attrs)
+    quote do
+      attr_reader(unquote(attrs))
+      attr_updater(unquote(attrs))
+      attr_writer(unquote(attrs))
+    end
   end
 
   @doc ~S"""
@@ -104,7 +106,17 @@ defmodule AttrAccessor do
       end
   """
   @spec attr_reader(atom() | [atom()]) :: Macro.t()
-  defmacro attr_reader(attrs), do: attr_reader_ast(attrs)
+  defmacro attr_reader(attrs) do
+    for attr <- List.wrap(attrs) do
+      quote generated: true do
+        def unquote(attr)(struct)
+
+        def unquote(attr)(%__MODULE__{unquote(attr) => value}) do
+          value
+        end
+      end
+    end
+  end
 
   @doc ~S"""
   Creates a "bang" updater functions on struct module for `attr` symbol/symbols which accept a function to read the current value, pass it to the function, and write the result back to the struct.
@@ -144,7 +156,17 @@ defmodule AttrAccessor do
       end
   """
   @spec attr_updater(atom() | [atom()]) :: Macro.t()
-  defmacro attr_updater(attrs), do: attr_updater_ast(attrs)
+  defmacro attr_updater(attrs) do
+    for attr <- List.wrap(attrs) do
+      quote generated: true do
+        def unquote(:"#{attr}!")(struct, f)
+
+        def unquote(:"#{attr}!")(st = %__MODULE__{unquote(attr) => current_value}, f) do
+          %__MODULE__{st | unquote(attr) => f.(current_value)}
+        end
+      end
+    end
+  end
 
   @doc ~S"""
   Creates writer functions on struct module for `attr` symbol/symbols.
@@ -184,31 +206,11 @@ defmodule AttrAccessor do
       end
   """
   @spec attr_writer(atom() | [atom()]) :: Macro.t()
-  defmacro attr_writer(attrs), do: attr_writer_ast(attrs)
-
-  defp attr_reader_ast(attrs) do
+  defmacro attr_writer(attrs) do
     for attr <- List.wrap(attrs) do
-      quote do
-        def unquote(attr)(st = %__MODULE__{unquote(attr) => value}) do
-          value
-        end
-      end
-    end
-  end
+      quote generated: true do
+        def unquote(attr)(struct, value)
 
-  defp attr_updater_ast(attrs) do
-    for attr <- List.wrap(attrs) do
-      quote do
-        def unquote(:"#{attr}!")(st = %__MODULE__{unquote(attr) => current_value}, f) do
-          %__MODULE__{st | unquote(attr) => f.(current_value)}
-        end
-      end
-    end
-  end
-
-  defp attr_writer_ast(attrs) do
-    for attr <- List.wrap(attrs) do
-      quote do
         def unquote(attr)(st = %__MODULE__{}, value) do
           %__MODULE__{st | unquote(attr) => value}
         end
