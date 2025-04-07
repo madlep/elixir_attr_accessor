@@ -9,7 +9,8 @@ defmodule AttrAccessor.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      licenses: "MIT"
+      licenses: "MIT",
+      source_url: "https://github.com/madlep/elixir_attr_accessor"
     ]
   end
 
